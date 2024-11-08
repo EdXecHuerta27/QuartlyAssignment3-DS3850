@@ -34,7 +34,7 @@ def show_quiz_window():
     quiz_window = tk.Tk()
     quiz_window.title("Quiz Bowl")
     quiz_window.geometry("500x400")
-    quiz_window.configure(bg="#f0f8ff")  # Light blue background
+    quiz_window.configure(bg="#f0f8ff")
     
     current_question_index = 0
     score = 0
@@ -56,7 +56,7 @@ def display_question():
         question_frame = tk.Frame(quiz_window, bg="#d1e7f5", bd=2, relief="solid")
         question_frame.pack(pady=20, padx=20, fill="both", expand=True)
         
-        # Display question text with larger font
+        # Display question text
         question_label = tk.Label(
             question_frame, text=f"Q{current_question_index + 1}: {question_data[0]}", 
             wraplength=450, font=("Arial", 14, "bold"), bg="#d1e7f5"
@@ -78,21 +78,41 @@ def display_question():
                 activebackground="#e0f2fe", highlightbackground="#cccccc", anchor="w"
             ).pack(fill="x", padx=15, pady=5)
         
-        # Next button with color and padding
-        next_button = tk.Button(
-            quiz_window, text="Next", command=check_answer, font=("Arial", 12, "bold"), 
+        # Check Answer button
+        check_button = tk.Button(
+            quiz_window, text="Check Answer", command=check_answer, font=("Arial", 12, "bold"), 
             bg="#4caf50", fg="white", activebackground="#66bb6a", padx=20, pady=5
         )
-        next_button.pack(pady=10)
+        check_button.pack(pady=10)
     else:
         show_score()
 
-# Function to check the answer and move to the next question
+# Function to check the answer, provide feedback, and prompt for next question
 def check_answer():
     global current_question_index, score
     correct_answer = questions[current_question_index][5]
     if selected_option.get() == correct_answer:
         score += 1
+        feedback = "Correct!"
+    else:
+        feedback = f"Incorrect. The correct answer was: {correct_answer}"
+    
+    # Show feedback and next button
+    for widget in quiz_window.winfo_children():
+        widget.destroy()
+    
+    feedback_label = tk.Label(quiz_window, text=feedback, font=("Arial", 14), bg="#f0f8ff")
+    feedback_label.pack(pady=20)
+    
+    next_button = tk.Button(
+        quiz_window, text="Next Question", command=next_question, 
+        font=("Arial", 12, "bold"), bg="#4caf50", fg="white", activebackground="#66bb6a", padx=20, pady=5
+    )
+    next_button.pack(pady=10)
+
+# Function to proceed to the next question
+def next_question():
+    global current_question_index
     current_question_index += 1
     display_question()
 
@@ -110,7 +130,7 @@ def show_score():
         font=("Arial", 12, "bold"), bg="#ff7043", fg="white", 
         activebackground="#ff8a65", padx=20, pady=5
     )
-    close_button.pack(pady=10)
+    close_button.pack()
 
 # Main Category Selection Window
 category_window = tk.Tk()
